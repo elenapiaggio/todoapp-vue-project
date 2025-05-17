@@ -40,7 +40,7 @@ const logout = async () => {
   const { error } = await supabase.auth.signOut();
   if (error) {
     console.log(error);
-  } else{
+  } else {
     console.log("Logout has been successful!!!")
   }
 }
@@ -71,7 +71,7 @@ const seeCurrentUser = async () => {
       <div class="buttonContainer">
         <button @click="createAccount"> Create </button>
         <button @click="login"> Login </button>
-        <button @click="seeCurrentUser"> See user </button>
+
         <button @click="logout"> Logout </button>
       </div>
     </div>
