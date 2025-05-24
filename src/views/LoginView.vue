@@ -1,57 +1,19 @@
 <script setup>
-import { ref } from "vue";
-import { supabase } from "@/clients/supabase";
+import { ref, onMounted } from "vue";
+import { createAccount, login, logout, getCurrentUser } from "@/services/auth.service";
+
 let email = ref("");
 let password = ref("");
 
-const createAccount = async () => {
-  console.log("creando cuenta ...");
-
-  const { data, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-  });
-
-  if (error) {
-    console.log(error)
-  } else {
-    console.log(data)
+// al montar este componente llamo a seeCurrentUser
+onMounted(async () => {
+  try {
+    const user = await getCurrentUser();
+    console.log("User logado:", user)
+  } catch (e) {
+    console.log(e);
   }
-}
-
-const login = async () => {
-  console.log("login...")
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value,
-  });
-
-  if (error) {
-    console.log(error)
-  } else {
-    console.log(data)
-  }
-
-}
-
-const logout = async () => {
-  console.log("logout");
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.log(error);
-  } else {
-    console.log("Logout has been successful!!!")
-  }
-}
-
-const seeCurrentUser = async () => {
-  console.log("see current user");
-  const localUser = await supabase.auth.getUser();
-  console.log(localUser)
-}
-
-seeCurrentUser();
+});
 
 </script>
 
@@ -71,10 +33,11 @@ seeCurrentUser();
       </div>
 
       <div class="buttonContainer">
-        <button @click="createAccount"> Create </button>
-        <button @click="login"> Login </button>
-        <button @click="seeCurrentUser"> See user </button>
-        <button @click="logout"> Logout </button>
+        <button @click="() => createAccount(email, password)"> Create </button>
+        <button @click="() => login(email, password)"> Login </button>
+        <button @click="() => getCurrentUser().then(console.log).catch(console.error)"> See user </button>
+        <button @click="() => logout().then(() => console.log('Logout successful!!!')).catch(console.error)"> Logout
+        </button>
       </div>
     </div>
 

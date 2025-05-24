@@ -1,62 +1,52 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { supabase } from "@/clients/supabase";
+import { getTasks, addTask, deleteTask } from "@/services/task.service";
+import { getCurrentUser } from "@/services/auth.service";
 
-let task = ref("");
-let tasks = ref([]);
+
+const task = ref("");
+const tasks = ref([]);
 const user = ref(null);
 
 
 onMounted(async () => {
-  // Como ya el usuario está logado, sino no podría estar en esta página
-  // Cojo la sesion y guardo el usuario
-  const { data: { session } } = await supabase.auth.getSession();
-  user.value = session?.user ?? null; 
+  try {
+    // Obtengo la sesión del usuario actual si hay alguno logado
+    user.value = await getCurrentUser();
 
-  if (user.value) {
-    // (Opcional) carga inicial de tareas del usuario con que estoy logado
-    // de momento lo hago así para comprobar que hay tareas con el usuario con que hice login
-    const { data, error } = await supabase
-      .from("todos")
-      .select("*")
-      .eq("user_id", user.value.id)
-      .order("inserted_at", { ascending: false });
+    // Si tengo un usuario logado, cargo sus tareas desde el service de tasks
+    if (user.value) {
+      tasks.value = await getTasks(user.value.id)
+    }
+  } catch (e) { console.log("Error " + e) }
 
-    if (!error) tasks.value = data;
-  }
 });
 
 
-const addTask = async () => {
-  console.log("Adding task ... " + task.value)
-
-  const title = task.value.trim();
-
+const handleAddTask = async () => {
   if (!user.value) {
-    console.warn("User is not logado");
+    console.warn("User is not logged in");
     return;
   }
 
-  const { data, error } = await supabase
-    .from("todos")
-    .insert([{
-      task: title,
-      is_complete: false,
-      user_id: user.value.id
-    }])
-    .select(); // para recuperar el registro con id y timestamps
-
-  if (error) {
-    console.error("Error añadiendo tarea:", error);
-  } else {
-    tasks.value.unshift(data[0]);
+  try {
+    const newTask = await addTask(task.value, user.value.id);
+    tasks.value.unshift(newTask);
     task.value = "";
+  } catch (e) {
+    console.log("Error adding task ", e)
   }
 };
 
-const deleteContact = async (id) => {
-  console.log("Delete task_id: ", id);
-}
+
+const handleDeleteTask = async (id) => {
+  try {
+    await deleteTask(id);
+    tasks.value = tasks.value.filter((t) => t.id !== id);
+  } catch (e) {
+    console.error("Error deleting task:", e);
+  }
+};
 </script>
 
 <template>
@@ -67,7 +57,7 @@ const deleteContact = async (id) => {
       <label for="task"> Task: </label>
       <input type="text" id="task" v-model="task">
 
-      <button @click="addTask"> Add Task </button>
+      <button @click="handleAddTask"> Add Task </button>
     </div>
 
     <div>
@@ -85,7 +75,7 @@ const deleteContact = async (id) => {
             <td>{{ task.task }}</td>
             <td>{{ task.is_complete }}</td>
             <td>
-              <button @click="deleteContact(task.id)">Delete</button>
+              <button @click="() => handleDeleteTask(task.id)">Delete</button>
             </td>
           </tr>
         </tbody>
