@@ -11,10 +11,11 @@ onMounted(async () => {
   // Como ya el usuario está logado, sino no podría estar en esta página
   // Cojo la sesion y guardo el usuario
   const { data: { session } } = await supabase.auth.getSession();
-  user.value = session?.user ?? null;
+  user.value = session?.user ?? null; 
 
   if (user.value) {
-    // (Opcional) carga inicial de tareas de este usuario
+    // (Opcional) carga inicial de tareas del usuario con que estoy logado
+    // de momento lo hago así para comprobar que hay tareas con el usuario con que hice login
     const { data, error } = await supabase
       .from("todos")
       .select("*")
@@ -32,7 +33,7 @@ const addTask = async () => {
   const title = task.value.trim();
 
   if (!user.value) {
-    console.warn("User  is not logado");
+    console.warn("User is not logado");
     return;
   }
 
@@ -52,6 +53,10 @@ const addTask = async () => {
     task.value = "";
   }
 };
+
+const deleteContact = async (id) => {
+  console.log("Delete task_id: ", id);
+}
 </script>
 
 <template>
@@ -80,7 +85,7 @@ const addTask = async () => {
             <td>{{ task.task }}</td>
             <td>{{ task.is_complete }}</td>
             <td>
-              <button @click="deleteContact(contact.id)">Delete</button>
+              <button @click="deleteContact(task.id)">Delete</button>
             </td>
           </tr>
         </tbody>
