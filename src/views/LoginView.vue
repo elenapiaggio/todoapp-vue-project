@@ -47,9 +47,11 @@ const logout = async () => {
 
 const seeCurrentUser = async () => {
   console.log("see current user");
-  const localUser = await supabase.auth.getSession();
+  const localUser = await supabase.auth.getUser();
   console.log(localUser)
 }
+
+seeCurrentUser();
 
 </script>
 
@@ -71,7 +73,7 @@ const seeCurrentUser = async () => {
       <div class="buttonContainer">
         <button @click="createAccount"> Create </button>
         <button @click="login"> Login </button>
-
+        <button @click="seeCurrentUser"> See user </button>
         <button @click="logout"> Logout </button>
       </div>
     </div>
