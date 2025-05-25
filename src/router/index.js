@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { supabase } from '@/clients/supabase';
+import { useAuthStore } from '@/stores/auth.store'
 
 import Login from '@/views/LoginView.vue';
 
@@ -24,17 +24,40 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach(async (to) => {
-  if (to.meta.requiresAuth) {
-    // recupera la sesión actual
-    const { data: { session } } = await supabase.auth.getSession()
 
-    // si no hay sesión, redirige a login
-    if (!session) {
+router.beforeEach(async (to) => {
+  const auth = useAuthStore()
+
+  // Si accede a la raíz "/", lo redirigimos a /tasks si ya está logado
+  if (to.path === '/') {
+    if (!auth.user) {
+      try {
+        await auth.loadCurrentUser()
+      } catch {
+        return { name: 'login' }
+      }
+    }
+
+    if (auth.user) {
+      return { name: 'Tasks' }
+    }
+  }
+
+  // Si la ruta requiere auth (como /tasks)
+  if (to.meta.requiresAuth) {
+    if (!auth.user) {
+      try {
+        await auth.loadCurrentUser()
+      } catch {
+        return { name: 'login' }
+      }
+    }
+
+    if (!auth.user) {
       return { name: 'login' }
     }
   }
-  // si no requiere auth o hay sesión, sigue adelante
 })
+
 
 export default router
