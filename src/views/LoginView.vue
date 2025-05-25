@@ -1,25 +1,39 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { createAccount, login, logout, getCurrentUser } from "@/services/auth.service";
+import { ref } from "vue";
+import { useAuthStore } from '@/stores/auth.store';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const auth = useAuthStore();
 
 let email = ref("");
 let password = ref("");
 
-// al montar este componente llamo a seeCurrentUser
-onMounted(async () => {
-  try {
-    const user = await getCurrentUser();
-    console.log("User logado:", user)
-  } catch (e) {
-    console.log(e);
-  }
-});
+
+const handleCreate = async () => {
+  await auth.createAccount(email.value, password.value);
+};
+
+const handleLogin = async () => {
+  await auth.login(email.value, password.value);
+  router.push('/tasks')
+}
+
+const handleLogout = async () => {
+  await auth.logout();
+}
+
+const handleSeeUser = async () => {
+  await auth.loadCurrentUser();
+  console.log("Actual user: ", auth.user);
+}
 
 </script>
 
 <template>
   <div class="hola">
     <h1>LOGIN</h1>
+
 
     <div>
       <div class="inputContainer">
@@ -33,12 +47,23 @@ onMounted(async () => {
       </div>
 
       <div class="buttonContainer">
-        <button @click="() => createAccount(email, password)"> Create </button>
-        <button @click="() => login(email, password)"> Login </button>
-        <button @click="() => getCurrentUser().then(console.log).catch(console.error)"> See user </button>
-        <button @click="() => logout().then(() => console.log('Logout successful!!!')).catch(console.error)"> Logout
+        <button @click="handleCreate"> Create </button>
+        <button @click="handleLogin"> Login </button>
+        <button @click="handleSeeUser"> See user </button>
+        <button @click="handleLogout"> Logout
         </button>
       </div>
+
+      <div v-if="auth.loading">Procesando...</div>
+
+      <div v-if="auth.user">
+        <p>Usuario actual: {{ auth.user.email }}</p>
+      </div>
+
+      <div v-if="auth.error" style="color: red">
+        {{ auth.error }}
+      </div>
+
     </div>
 
 
