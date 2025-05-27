@@ -26,9 +26,17 @@ const handleDeleteTask = async (id) => {
   try {
     await tasksStore.deleteTask(id);
   } catch (e) {
-    console.error("Error deleting task:", e);
+    console.error("Error deleting task: ", e);
   }
 };
+const handleToggleComplete = async (task) => {
+  console.log("check clicado");
+  try {
+    await tasksStore.updateTaskStatus(task.id, task.is_complete)
+  } catch (e) {
+    console.log("Error updating task: " + e)
+  }
+}
 </script>
 
 <template>
@@ -65,6 +73,9 @@ const handleDeleteTask = async (id) => {
         </thead>
         <tbody>
           <tr v-for="task in tasksStore.tasks" :key="task.id">
+            <td>
+              <input type="checkbox" :checked="task.is_complete" @change="() => handleToggleComplete(task)" />
+            </td>
             <td>{{ task.task }}</td>
             <td>{{ task.is_complete }}</td>
             <td>
