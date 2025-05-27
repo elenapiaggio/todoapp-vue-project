@@ -8,8 +8,7 @@
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build"
+    "build": "vite build"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",
