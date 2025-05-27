@@ -40,3 +40,16 @@ export const deleteTask = async (taskId) => {
 
   if (error) throw error;
 };
+
+export const updateTaskStatus = async (taskId, isComplete) => {
+  const { data, error } = await supabase
+    .from("todos")
+    .update(
+      { is_complete: isComplete }
+    )
+    .eq('id', taskId)
+    .select()
+    .single()
+  if (error) throw error;
+  return data;
+}

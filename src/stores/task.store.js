@@ -4,7 +4,9 @@ import { getCurrentUser } from '@/services/auth.service';
 import {
   getTasks as getTasksService,
   addTask as addTaskService,
-  deleteTask as deleteTaskService
+  deleteTask as deleteTaskService,
+  updateTaskStatus as updateTaskStatusService,
+
 } from '@/services/task.service';
 
 export const useTasksStore = defineStore('tasks', () => {
@@ -61,6 +63,22 @@ export const useTasksStore = defineStore('tasks', () => {
     }
   }
 
+  const updateTaskStatus = async (taskId, currentState) => {
+    loading.value = true
+    error.value = null
+    try {
+      const updated = await updateTaskStatusService(taskId, !currentState)
+      const index = tasks.value.findIndex(t => t.id === taskId)
+      if (index !== -1) {
+        tasks.value[index] = updated
+      }
+    } catch (err) {
+      error.value = err.message
+    } finally {
+      loading.value = false
+    }
+  }
+
   // aqui tengo que poner todo lo que quiero que sea accesible desde fuera
   return {
     user,
@@ -70,6 +88,7 @@ export const useTasksStore = defineStore('tasks', () => {
     tasksCount,
     loadUserAndTasks,
     addTask,
-    deleteTask
+    deleteTask,
+    updateTaskStatus
   }
 })

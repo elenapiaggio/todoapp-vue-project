@@ -47,11 +47,9 @@ const handleSeeUser = async () => {
       </div>
 
       <div class="buttonContainer">
-        <button @click="handleCreate"> Create </button>
-        <button @click="handleLogin"> Login </button>
-        <button @click="handleSeeUser"> See user </button>
-        <button @click="handleLogout"> Logout
-        </button>
+        <button @click="handleCreate"> Sign up </button>
+        <button @click="handleLogin"> Log in </button>
+        
       </div>
 
       <div v-if="auth.loading">Procesando...</div>
