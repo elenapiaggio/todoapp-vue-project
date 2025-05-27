@@ -1,54 +1,31 @@
 <script setup>
 import { ref } from "vue";
-import { supabase } from "@/clients/supabase";
+import { useAuthStore } from '@/stores/auth.store';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const auth = useAuthStore();
+
 let email = ref("");
 let password = ref("");
 
-const createAccount = async () => {
-  console.log("creando cuenta ...");
 
-  const { data, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-  });
+const handleCreate = async () => {
+  await auth.createAccount(email.value, password.value);
+};
 
-  if (error) {
-    console.log(error)
-  } else {
-    console.log(data)
-  }
+const handleLogin = async () => {
+  await auth.login(email.value, password.value);
+  router.push('/tasks')
 }
 
-const login = async () => {
-  console.log("login...")
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value,
-  });
-
-  if (error) {
-    console.log(error)
-  } else {
-    console.log(data)
-  }
-
+const handleLogout = async () => {
+  await auth.logout();
 }
 
-const logout = async () => {
-  console.log("logout");
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.log(error);
-  } else{
-    console.log("Logout has been successful!!!")
-  }
-}
-
-const seeCurrentUser = async () => {
-  console.log("see current user");
-  const localUser = await supabase.auth.getSession();
-  console.log(localUser)
+const handleSeeUser = async () => {
+  await auth.loadCurrentUser();
+  console.log("Actual user: ", auth.user);
 }
 
 </script>
@@ -56,6 +33,7 @@ const seeCurrentUser = async () => {
 <template>
   <div class="hola">
     <h1>LOGIN</h1>
+
 
     <div>
       <div class="inputContainer">
@@ -69,11 +47,23 @@ const seeCurrentUser = async () => {
       </div>
 
       <div class="buttonContainer">
-        <button @click="createAccount"> Create </button>
-        <button @click="login"> Login </button>
-        <button @click="seeCurrentUser"> See user </button>
-        <button @click="logout"> Logout </button>
+        <button @click="handleCreate"> Create </button>
+        <button @click="handleLogin"> Login </button>
+        <button @click="handleSeeUser"> See user </button>
+        <button @click="handleLogout"> Logout
+        </button>
       </div>
+
+      <div v-if="auth.loading">Procesando...</div>
+
+      <div v-if="auth.user">
+        <p>Usuario actual: {{ auth.user.email }}</p>
+      </div>
+
+      <div v-if="auth.error" style="color: red">
+        {{ auth.error }}
+      </div>
+
     </div>
 
 
