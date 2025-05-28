@@ -26,54 +26,157 @@ const handleDeleteTask = async (id) => {
   try {
     await tasksStore.deleteTask(id);
   } catch (e) {
-    console.error("Error deleting task:", e);
+    console.error("Error deleting task: ", e);
   }
 };
+const handleToggleComplete = async (task) => {
+  console.log("check clicado");
+  try {
+    await tasksStore.updateTaskStatus(task.id, task.is_complete)
+  } catch (e) {
+    console.log("Error updating task: " + e)
+  }
+}
 </script>
 
 <template>
-  <div>
+  <div class="tasks-container">
 
-    <div>
-      <button @click="auth.logout()">Logout</button>
+    <div class="header">
+      <h1>ToDo-App ✏️</h1>
     </div>
 
-    <h1>WELCOME TO TODO APP</h1>
-    <div v-if="tasksStore.loading">Loading tasks...</div>
-    <div v-if="tasksStore.error" style="color: red;">{{ tasksStore.error }}</div>
-    <div v-if="tasksStore.user">
-      <p>Usuario: {{ tasksStore.user.email }}</p>
+    <div class="tasks-content">
+      <div class="task-form">
+        <input type="text" id="task" v-model="task" placeholder="Add new task ...">
+        <button @click="handleAddTask" class="btn-addtask"> Add Task </button>
+      </div>
+
+      <div class="task-list">
+        <ul class="tasks">
+          <li class="task-item" v-for="task in tasksStore.tasks" :key="task.id">
+            <label class="task-info">
+              <input class="task-checkbox-input" type="checkbox" :checked="task.is_complete"
+                @change="() => handleToggleComplete(task)" />
+              <span :class="{ completed: task.is_complete }">{{ task.task }}</span>
+            </label>
+
+            <button class="delete-btn" @click="() => handleDeleteTask(task.id)">
+              Delete
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
 
-
-    <div class="inputContainer">
-      <label for="task"> Task: </label>
-      <input type="text" id="task" v-model="task">
-
-      <button @click="handleAddTask"> Add Task </button>
-    </div>
-
-    <div>
-      <h3>Tasks list</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Task description</th>
-            <th>State</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="task in tasksStore.tasks" :key="task.id">
-            <td>{{ task.task }}</td>
-            <td>{{ task.is_complete }}</td>
-            <td>
-              <button @click="() => handleDeleteTask(task.id)">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
   </div>
 </template>
+
+<style scoped>
+.tasks-container {
+  margin: 0 auto;
+}
+
+.tasks-content {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.tasks-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.task-form input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.task-form button {
+  cursor: pointer;
+}
+
+.task-form button:hover {
+  opacity: 0.9;
+}
+
+.task-list {
+  margin-top: 1rem;
+}
+
+.task-list-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.tasks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f6f6f6;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.task-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+}
+
+.task-info span {
+  font-size: 1rem;
+}
+
+.task-info .completed {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+.task-checkbox-input {
+  width: 20px;
+  height: 20px;
+  accent-color: #73B5BD;
+  cursor: pointer;
+  border-radius: 25px;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #FFD7C0;
+  color: #877E79;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #e57373;
+  color: white;
+}
+</style>
