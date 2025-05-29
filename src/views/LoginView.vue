@@ -178,8 +178,8 @@ button:hover {
   }
 
   .login-welcome-title {
-    margin-top: 6rem;
-    margin-bottom: 4rem;
+    margin-top: 5rem;
+    margin-bottom: 1rem;
   }
 }
 </style>

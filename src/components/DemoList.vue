@@ -34,7 +34,7 @@ const tasks = [
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-top: 6rem;
+  margin-top: 4rem;
 }
 
 .tasks {
