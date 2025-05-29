@@ -3,6 +3,9 @@ import { ref } from "vue";
 import { useAuthStore } from '@/stores/auth.store';
 import { useRouter } from 'vue-router';
 
+import Header from "@/components/Header.vue";
+import DemoList from "@/components/DemoList.vue";
+
 const router = useRouter();
 const auth = useAuthStore();
 
@@ -33,12 +36,15 @@ const handleSeeUser = async () => {
 <template>
   <div class="login-container">
 
-    <div class="header">
-      <h1 class="login-title">Login</h1>
+    <Header />
+
+    <div class="login-welcome-title">
+      <h1> Convierte cada <span class="tachado">todo</span> <br />en un <span class="hecho">done</span>
+      </h1>
     </div>
 
-
     <div class="login-form">
+
       <div class="login-inputs">
         <input type="email" id="email" placeholder="Email" v-model="email">
         <input type="password" id="password" placeholder="Password" v-model="password">
@@ -56,32 +62,32 @@ const handleSeeUser = async () => {
         <p>Usuario actual: {{ auth.user.email }}</p>
       </div>
 
-      <div v-if="auth.error" style="color: red">
-        {{ auth.error }}
-      </div>
-
+      <DemoList class="demo-list-desktop" />
     </div>
+
 
 
   </div>
 </template>
 
-<style>
+<style scoped>
 .login-container {
   padding: 0;
   display: flex;
   flex-direction: column;
 }
 
-.login-title {
-  font-size: 2rem;
-  font-weight: 600;
+.login-welcome-title {
+  width: 90%;
+  margin: 0 auto;
   text-align: center;
-  color: #555460;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
 }
 
 .login-form {
   width: 90%;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -91,9 +97,8 @@ const handleSeeUser = async () => {
 .login-inputs {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
   margin-top: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 input {
@@ -144,16 +149,37 @@ button:hover {
 
 .header {
   background-color: #E0D2FE;
-  padding: 2rem 3rem 2rem;
+  padding: 1rem;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  font-size: 1rem;
 }
 
-.header-title {
-  font-size: 2rem;
+
+
+.tachado {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.hecho {
   font-weight: bold;
-  margin: 0;
-  color: #555561;
+  color: #73B5BD;
+}
+
+.demo-list-desktop {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .demo-list-desktop {
+    display: block;
+  }
+
+  .login-welcome-title {
+    margin-top: 6rem;
+    margin-bottom: 4rem;
+  }
 }
 </style>
