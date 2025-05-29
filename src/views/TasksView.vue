@@ -4,6 +4,9 @@ import { ref, onMounted } from "vue";
 import { useTasksStore } from "@/stores/task.store";
 import { useAuthStore } from '@/stores/auth.store';
 
+import Header from "@/components/Header.vue";
+
+
 const auth = useAuthStore()
 const tasksStore = useTasksStore();
 const task = ref("");
@@ -42,9 +45,10 @@ const handleToggleComplete = async (task) => {
 <template>
   <div class="tasks-container">
 
-    <div class="header">
-      <h1>ToDo-App ✏️</h1>
-    </div>
+    <Header>
+      <a href="#" class="logout-link" @click.prevent="auth.logout()">Log out</a>
+
+    </Header>
 
     <div class="tasks-content">
       <div class="task-form">
@@ -178,5 +182,16 @@ const handleToggleComplete = async (task) => {
 .delete-btn:hover {
   background-color: #e57373;
   color: white;
+}
+
+.logout-link {
+  color: #555561;
+  text-decoration: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.logout-link:hover {
+  text-decoration: underline;
 }
 </style>
