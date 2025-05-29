@@ -194,5 +194,4 @@ const handleToggleComplete = async (task) => {
 .logout-link:hover {
   text-decoration: underline;
 }
-
 </style>

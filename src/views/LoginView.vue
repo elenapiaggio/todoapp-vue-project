@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { useRouter } from 'vue-router';
 
 import Header from "@/components/Header.vue";
+import DemoList from "@/components/DemoList.vue";
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -61,15 +62,15 @@ const handleSeeUser = async () => {
         <p>Usuario actual: {{ auth.user.email }}</p>
       </div>
 
-
-
+      <DemoList class="demo-list-desktop" />
     </div>
+
 
 
   </div>
 </template>
 
-<style>
+<style scoped>
 .login-container {
   padding: 0;
   display: flex;
@@ -86,6 +87,7 @@ const handleSeeUser = async () => {
 
 .login-form {
   width: 90%;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -166,5 +168,18 @@ button:hover {
   color: #73B5BD;
 }
 
-@media (min-width: 768px) {}
+.demo-list-desktop {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .demo-list-desktop {
+    display: block;
+  }
+
+  .login-welcome-title {
+    margin-top: 6rem;
+    margin-bottom: 4rem;
+  }
+}
 </style>
