@@ -94,11 +94,19 @@ const handleToggleComplete = async (task) => {
 }
 
 .task-form {
+  width: 90%;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  margin: 0 auto;
   margin-top: 1rem;
-  margin-bottom: 1rem;
+
+}
+
+.task-form input,
+.task-form .btn-addtask {
+  width: 100%;
 }
 
 .task-form input {
@@ -193,5 +201,34 @@ const handleToggleComplete = async (task) => {
 
 .logout-link:hover {
   text-decoration: underline;
+}
+
+.btn-addtask {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #73B5BD;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+
+@media (min-width: 768px) {
+  .task-form {
+    width: 80%;
+    max-width: 500px;
+    display: flex;
+    margin: 0 auto;
+    margin-top: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .task-form {
+    width: 80%;
+    max-width: 500px;
+  }
 }
 </style>
