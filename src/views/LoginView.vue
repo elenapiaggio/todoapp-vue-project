@@ -3,8 +3,9 @@ import { ref } from "vue";
 import { useAuthStore } from '@/stores/auth.store';
 import { useRouter } from 'vue-router';
 
+import todoappImg from '@/assets/images/todoapp.png';
+
 import Header from "@/components/Header.vue";
-import DemoList from "@/components/DemoList.vue";
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -62,7 +63,10 @@ const handleSeeUser = async () => {
         <p>Usuario actual: {{ auth.user.email }}</p>
       </div>
 
-      <DemoList class="demo-list-desktop" />
+      <div>
+        <img class="demo-list-desktop" :src="todoappImg" alt="TodoApp logo" />
+      </div>
+
     </div>
 
 
@@ -174,7 +178,12 @@ button:hover {
 
 @media (min-width: 768px) {
   .demo-list-desktop {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
+    margin: 2rem;
   }
 
   .login-welcome-title {
