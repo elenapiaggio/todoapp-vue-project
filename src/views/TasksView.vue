@@ -5,6 +5,9 @@ import { useTasksStore } from "@/stores/task.store";
 import { useAuthStore } from '@/stores/auth.store';
 
 import Header from "@/components/Header.vue";
+import TaskColumn from "@/components/TaskColumn.vue";
+import Summary from "@/components/TaskSummary.vue";
+import todolist from '@/assets/images/todolist.png';
 
 
 const auth = useAuthStore()
@@ -44,10 +47,8 @@ const handleToggleComplete = async (task) => {
 
 <template>
   <div class="tasks-container">
-
     <Header>
       <a href="#" class="logout-link" @click.prevent="auth.logout()">Log out</a>
-
     </Header>
 
     <div class="tasks-content">
@@ -74,6 +75,39 @@ const handleToggleComplete = async (task) => {
     </div>
 
 
+
+
+    <div class="tasks-content-desktop-columns">
+      <div class="summary-column">
+        <Summary :tasks="tasksStore.tasks" />
+       
+      </div>
+
+      <div class="content-column">
+        <div class="task-form-desktop">
+          <input type="text" id="task" v-model="task" placeholder="Add new task ...">
+          <button @click="handleAddTask" class="btn-addtask"> Add Task </button>
+        </div>
+        <div class="task-two-column">
+          <div class="task-column">
+            <TaskColumn title="Todo" :tasks="tasksStore.tasks.filter(t => !t.is_complete)"
+              :handleDeleteTask="handleDeleteTask" :handleToggleComplete="handleToggleComplete" />
+          </div>
+
+          <div class="task-column">
+            <TaskColumn title="Done" :tasks="tasksStore.tasks.filter(t => t.is_complete)"
+              :handleDeleteTask="handleDeleteTask" :handleToggleComplete="handleToggleComplete" />
+          </div>
+        </div>
+
+
+
+      </div>
+
+
+
+
+    </div>
   </div>
 </template>
 
@@ -214,6 +248,15 @@ const handleToggleComplete = async (task) => {
   font-weight: 500;
 }
 
+.tasks-content-desktop-columns {
+  display: none;
+}
+
+.task-form-desktop {
+  display: none;
+}
+
+
 
 @media (min-width: 768px) {
   .task-form {
@@ -222,13 +265,106 @@ const handleToggleComplete = async (task) => {
     display: flex;
     margin: 0 auto;
     margin-top: 2rem;
+    margin-bottom: 2rem;
   }
+
 }
 
 @media (min-width: 1024px) {
-  .task-form {
-    width: 80%;
-    max-width: 500px;
+  .tasks-content {
+    display: none;
   }
+
+  .task-form {
+    width: 100%;
+
+  }
+
+  .task-form-desktop {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1.25rem;
+  }
+
+  .task-form-desktop input {
+    flex: 6;
+  }
+
+  .task-form-desktop .btn-addtask {
+    flex: 1;
+  }
+
+  .task-form-desktop input,
+  .task-form-desktop .btn-addtask {
+    width: 100%;
+  }
+
+  .task-form-desktop input {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    height: 42px;
+  }
+
+  .tasks-content-desktop-columns {
+    display: flex;
+    gap: 1rem;
+    width: 80%;
+    justify-content: center;
+    margin: 0 auto;
+    margin-top: 4rem;
+  }
+
+  .task-two-column {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .content-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .summary-column {
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .content-column {
+    flex: 2;
+  }
+
+  .task-column {
+    flex: 2;
+  }
+
+  .task-form-desktop .btn-addtask {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    height: 42px;
+  }
+
+  .logo {
+    max-width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    margin: 2rem;
+
+  }
+
+
 }
 </style>
