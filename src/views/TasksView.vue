@@ -80,7 +80,7 @@ const handleToggleComplete = async (task) => {
     <div class="tasks-content-desktop-columns">
       <div class="summary-column">
         <Summary :tasks="tasksStore.tasks" />
-       
+
       </div>
 
       <div class="content-column">
@@ -326,6 +326,7 @@ const handleToggleComplete = async (task) => {
   .task-two-column {
     display: flex;
     flex-direction: row;
+    gap: 2rem;
   }
 
   .content-column {
