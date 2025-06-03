@@ -44,8 +44,13 @@ const handleSeeUser = async () => {
       </h1>
     </div>
 
+    
+
     <div class="login-form">
 
+      <div>
+        <img class="demo-list-desktop" :src="todoappImg" alt="TodoApp logo" />
+      </div>
       <div class="login-inputs">
         <input type="email" id="email" placeholder="Email" v-model="email">
         <input type="password" id="password" placeholder="Password" v-model="password">
@@ -63,9 +68,7 @@ const handleSeeUser = async () => {
         <p>Usuario actual: {{ auth.user.email }}</p>
       </div>
 
-      <div>
-        <img class="demo-list-desktop" :src="todoappImg" alt="TodoApp logo" />
-      </div>
+      
 
     </div>
 
@@ -181,13 +184,41 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 90%;
+    width: 50%;
     margin: 0 auto;
-    margin: 2rem;
+    margin-top: 1rem;
   }
 
+
+
   .login-welcome-title {
-    margin-top: 5rem;
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+
+  .login-inputs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  input {
+    margin: 0rem 0 1rem;
+  }
+
+  .login-form {
+    width: 90%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+  }
+
+  .login-inputs {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
     margin-bottom: 1rem;
   }
 }
