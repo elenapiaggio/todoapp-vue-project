@@ -10,27 +10,97 @@ import Header from "@/components/Header.vue";
 const router = useRouter();
 const auth = useAuthStore();
 
+const emailError = ref("");
+const passwordError = ref("");
+
+const loginError = ref("");
+const successMessage = ref("");
+
+
+
 let email = ref("");
 let password = ref("");
 
 
 const handleCreate = async () => {
-  await auth.createAccount(email.value, password.value);
+  emailError.value = "";
+  passwordError.value = "";
+  loginError.value = "";
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=(?:.*[a-zA-Z]){4,})(?=.*\d).+$/;
+
+  let hasError = false;
+
+  if (!emailRegex.test(email.value)) {
+    emailError.value = "Por favor, introduce un email válido.";
+    hasError = true;
+  }
+
+  if (!passwordRegex.test(password.value)) {
+    passwordError.value = "La contraseña debe tener al menos 4 letras y 1 número.";
+    hasError = true;
+  }
+
+  if (hasError) return;
+
+  try {
+    await auth.createAccount(email.value, password.value);
+    successMessage.value = "Cuenta creada correctamente.";
+
+    // Espera 2 segundos para que se vea el mensaje
+    setTimeout(() => {
+      successMessage.value = "";
+      router.push('/tasks');
+    }, 5000); 
+  } catch (e) {
+    if (e.message.includes("already")) {
+      loginError.value = "Este email ya está registrado.";
+    } else {
+      loginError.value = "Error al crear la cuenta. Inténtalo de nuevo.";
+    }
+    console.error("Error al crear cuenta:", e);
+  }
+
+
 };
 
+
+
 const handleLogin = async () => {
-  await auth.login(email.value, password.value);
-  router.push('/tasks')
-}
 
-const handleLogout = async () => {
-  await auth.logout();
-}
+  emailError.value = "";
+  passwordError.value = "";
 
-const handleSeeUser = async () => {
-  await auth.loadCurrentUser();
-  console.log("Actual user: ", auth.user);
-}
+  loginError.value = "";
+
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email.value)) {
+    emailError.value = "Por favor, introduce un email válido.";
+    return;
+  }
+
+  const passwordRegex = /^(?=(?:.*[a-zA-Z]){4,})(?=.*\d).+$/;
+  if (!passwordRegex.test(password.value)) {
+    passwordError.value = "La contraseña debe tener al menos 4 letras y 1 número.";
+    return;
+  }
+
+  try {
+    await auth.login(email.value, password.value);
+    router.push('/tasks');
+  } catch (e) {
+    if (e.code === 'auth/user-not-found') {
+      loginError.value = "El usuario no existe.";
+    } else if (e.code === 'auth/wrong-password') {
+      loginError.value = "Contraseña incorrecta.";
+    } else {
+      loginError.value = "Error al iniciar sesión.";
+    }
+  }
+
+};
 
 </script>
 
@@ -44,36 +114,29 @@ const handleSeeUser = async () => {
       </h1>
     </div>
 
-    
-
     <div class="login-form">
-
       <div>
         <img class="demo-list-desktop" :src="todoappImg" alt="TodoApp logo" />
       </div>
       <div class="login-inputs">
+        <div v-if="successMessage" class="success">{{ successMessage }}</div>
+
+        <div v-if="emailError" class="error">{{ emailError }}</div>
         <input type="email" id="email" placeholder="Email" v-model="email">
+
+        <div v-if="passwordError" class="error">{{ passwordError }}</div>
         <input type="password" id="password" placeholder="Password" v-model="password">
       </div>
-
       <div class="login-buttons">
         <button @click="handleLogin" class="login-btn"> Log in </button>
         <button @click="handleCreate" class="signup-btn"> Sign up </button>
-
       </div>
 
       <div v-if="auth.loading" class="error-loading">Procesando...</div>
-
       <div v-if="auth.user">
         <p>Usuario actual: {{ auth.user.email }}</p>
       </div>
-
-      
-
     </div>
-
-
-
   </div>
 </template>
 
@@ -178,6 +241,18 @@ button:hover {
 .demo-list-desktop {
   display: none;
 }
+
+.success {
+  margin-top: 1rem;
+  color: green;
+  font-size: 0.95rem;
+  text-align: center;
+  background-color: #e0f8e9;
+  border: 1px solid #b5e2c4;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
 
 @media (min-width: 768px) {
   .demo-list-desktop {

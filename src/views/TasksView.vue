@@ -1,5 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from 'vue-router';
+
 
 import { useTasksStore } from "@/stores/task.store";
 import { useAuthStore } from '@/stores/auth.store';
@@ -9,7 +11,7 @@ import TaskColumn from "@/components/TaskColumn.vue";
 import Summary from "@/components/TaskSummary.vue";
 import todolist from '@/assets/images/todolist.png';
 
-
+const router = useRouter();
 const auth = useAuthStore()
 const tasksStore = useTasksStore();
 const task = ref("");
@@ -43,12 +45,16 @@ const handleToggleComplete = async (task) => {
     console.log("Error updating task: " + e)
   }
 }
+const handleLogout = async () => {
+  await auth.logout();
+  router.push('/');
+}
 </script>
 
 <template>
   <div class="tasks-container">
     <Header>
-      <a href="#" class="logout-link" @click.prevent="auth.logout()">Log out</a>
+      <a href="#" class="logout-link" @click.prevent="handleLogout">Log out</a>
     </Header>
 
     <div class="tasks-content">
